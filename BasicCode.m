@@ -1,0 +1,54 @@
+%Initialize all constants
+g_k = 36;
+g_na = 120;
+g_l = 3;
+e_k = -12;
+e_na = 115;
+e_l = 10.6;
+v_m = -70;
+c_m = 1;
+
+%Introduce all variables
+% v_m = membrane voltage
+% m = probability of active sodium channels
+% h = probability of inactive sodium channels
+% n = probability of active potassium channels
+
+t = 0:.1:100;
+step = .1;
+
+V_m = [];
+
+for i = 1:length(t)
+
+V_m = [V_m v_m];    
+    
+a_m = .1*((25-v_m)/(exp((25-v_m)/10)-1));
+b_m = 4*exp(-v_m/18);
+a_h = .07*exp(-v_m/20);
+b_h = 1/(exp((30-v_m)/10)+1);
+a_n = .01*((10-v_m)/exp((10-v_m)/10)-1);
+b_n = .125*exp(-v_m/20);
+
+m = a_m/(a_m + b_m);
+h = a_h/(a_h + b_h);
+n = a_n/(a_n + b_n);
+
+i_na = m^3*g_na*h*(v_m - e_na);
+i_k = n^4*g_k*(v_m - e_k);
+i_l = g_l*(v_m - e_l);
+i_ion = i_na + i_k + i_l;
+
+v_m = v_m + (step*(i_ion/c_m));
+m = m + (step*(a_m*(1-m)-b_m*m));
+h = h + (step*(a_h*(1-h)-b_h*h));
+n = n + (step*(a_n*(1-n)-b_n*n));
+
+
+
+end
+
+plot(t,V_m);
+
+
+

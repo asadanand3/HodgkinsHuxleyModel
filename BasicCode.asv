@@ -5,8 +5,9 @@ g_l = .3;
 e_k = -12;
 e_na = 115;
 e_l = 10.6;
-v_m = -70;
+v_rest = -70;
 c_m = 1;
+I = 0;
 
 %Introduce all variables
 % v_m = membrane voltage
@@ -14,20 +15,12 @@ c_m = 1;
 % h = probability of inactive sodium channels
 % n = probability of active potassium channels
 
-step = 1;
+v_m = 0; %start membrane at 0 for the purposes of solving the differential equations
+
+step = .01;
 t = 0:step:100;
 
-
-V_m = [];
-I_na = [];
-I_k = [];
-I_l = [];
-
-for i = 1:length(t)
-
-V_m = [V_m v_m];    
-
-
+%Initial conditions
 a_m = .1*((25-v_m)/(exp((25-v_m)/10)-1));
 b_m = 4*exp(-v_m/18);
 a_h = .07*exp(-v_m/20);
@@ -39,23 +32,37 @@ m = a_m/(a_m + b_m);
 h = a_h/(a_h + b_h);
 n = a_n/(a_n + b_n);
 
-i_na = m^3*g_na*h*(v_m - e_na);
-i_k = n^4*g_k*(v_m - e_k);
-i_l = g_l*(v_m - e_l);
-i_ion = i_na + i_k + i_l;
+%main loop over 100 ms: calculate probability coeffs, ion channel currents,
+%and run euler's method to obtain next point in time
+for i = 1:length(t)-1
 
-v_m = v_m + (step*(i_ion/c_m));
-m = m + (step*(a_m*(1-m)-b_m*m));
-h = h + (step*(a_h*(1-h)-b_h*h));
-n = n + (step*(a_n*(1-n)-b_n*n));
+a_m(i) = .1*((25-v_m(i))/(exp((25-v_m(i))/10)-1));
+b_m(i) = 4*exp(-v_m(i)/18);
+a_h(i) = .07*exp(-v_m(i)/20);
+b_h(i) = 1/(exp((30-v_m(i))/10)+1);
+a_n(i) = .01*((10-v_m(i))/(exp((10-v_m(i))/10)-1));
+b_n(i) = .125*exp(-v_m(i)/80);
 
-I_na = [I_na i_na];
-I_k = [I_k i_k];
-I_l = [I_l i_l];
+i_na = (m(i)^3)*g_na*h(i)*(v_m(i) - e_na);
+G_na(i) = (m(i)^3)*g_na*h(i);
+i_k = (n(i)^4)*g_k*(v_m(i) - e_k);
+G_k = (n(i)^4)*g_k;
+i_l = g_l*(v_m(i) - e_l);
+G_l = g_l;
+i_ion = I - i_na - i_k - i_l;
+
+v_m(i+1) = v_m(i) + (step*(i_ion/c_m));
+m(i+1) = m(i) + (step*((a_m(i)*(1-m(i)))-(b_m(i)*m(i))));
+h(i+1) = h(i) + (step*((a_h(i)*(1-h(i)))-(b_h(i)*h(i))));
+n(i+1) = n(i) + (step*((a_n(i)*(1-n(i)))-(b_n(i)*n(i))));
 
 end
 
-plot(t,V_m);
+v_m = v_m - v_rest; %shift resting potential down to -70mV
+
+plot(t,v_m);
+figure
+
 
 
 

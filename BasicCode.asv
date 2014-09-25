@@ -42,12 +42,12 @@ n = a_n/(a_n + b_n);
 i_na = m^3*g_na*h*(v_m - e_na);
 i_k = n^4*g_k*(v_m - e_k);
 i_l = g_l*(v_m - e_l);
-i_ion = -i_na - i_k - i_l;
+i_ion = i_na + i_k + i_l;
 
 v_m = v_m + (step*(i_ion/c_m));
-m = m + (step*((a_m*(1-m))-(b_m*m)));
-h = h + (step*((a_h*(1-h))-(b_h*h)));
-n = n + (step*((a_n*(1-n))-(b_n*n)));
+m = m + (step*(a_m*(1-m)-b_m*m));
+h = h + (step*(a_h*(1-h)-b_h*h));
+n = n + (step*(a_n*(1-n)-b_n*n));
 
 I_na = [I_na i_na];
 I_k = [I_k i_k];

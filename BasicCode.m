@@ -7,6 +7,7 @@ e_na = 115;
 e_l = 10.6;
 v_rest = -70;
 c_m = 1;
+%no injection current
 I = 0;
 
 %Introduce all variables
@@ -17,6 +18,7 @@ I = 0;
 
 v_m = 0; %start membrane at 0 for the purposes of solving the differential equations
 
+%setup time period
 step = .01;
 t = 0:step:100;
 
@@ -65,8 +67,13 @@ end
 v_m = v_m + v_rest; %shift resting potential down to -70mV
 
 plot(t,v_m);
+xlabel('time (ms)'); ylabel('Voltage (mV)'); title('Membrane Potential v. Time')
+axis([0 100 -80 -50]);
+
 figure
 plot(t,G_k,'r',t,G_na,'b');
+xlabel('t (ms)'); ylabel('Conductance (mS/cm^{2})'); title('Conductance v. Time')
+
 
 
 

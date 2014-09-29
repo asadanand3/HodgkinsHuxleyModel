@@ -16,9 +16,11 @@ c_m = 1;
 
 v_m = 0; %start membrane at 0 for the purposes of solving the differential equations
 
+%setup time period
 step = .01;
 t = 0:step:100;
 
+%create 5 uA/cm^2 pulse for .5 ms
 x = 0:step:.5;
 I = zeros(1,length(t));
 I(1:length(x)) = 5;
@@ -68,6 +70,10 @@ end
 
 v_m = v_m + v_rest; %shift resting potential down to -70mV
 
+
 plot(t,v_m);
+xlabel('time (ms)'); ylabel('Voltage (mV)'); title('Membrane Potential v. Time')
+
 figure
 plot(t,G_k,'r',t,G_na,'b');
+xlabel('t (ms)'); ylabel('Conductance (mS/cm^{2})'); title('Conductance v. Time')
